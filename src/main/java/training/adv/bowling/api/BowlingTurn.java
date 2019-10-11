@@ -6,8 +6,8 @@ public interface BowlingTurn extends Turn, Persistable<BowlingTurnEntity> {
 	Boolean isMiss();
 	Integer getFirstPin();
 	Integer getSecondPin();
-	
+
 	void addPins(Integer... pins);
-	
+
 	LinkedList<BowlingTurn> getAsLinkedNode();
 }

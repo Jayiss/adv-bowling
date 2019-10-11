@@ -5,7 +5,7 @@ import training.adv.bowling.api.BowlingTurnEntity;
 import training.adv.bowling.api.LinkedList;
 import training.adv.bowling.api.TurnKey;
 
-public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedList<BowlingTurn>, Cloneable {
+public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedList<BowlingTurn> {
     private BowlingTurnImpl previousItem, nextItem;
     private TurnKey turnKey;
     private Integer maxPin, firstPin, secondPin;
@@ -13,7 +13,7 @@ public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedLi
 
     //constructors
     //TODO
-    public BowlingTurnImpl(BowlingTurnImpl previousItem, Integer firstPin, Integer secondPin, Integer maxPin) {
+    BowlingTurnImpl(BowlingTurnImpl previousItem, Integer firstPin, Integer secondPin, Integer maxPin) {
         this.previousItem = previousItem;
         this.firstPin = firstPin;
         this.secondPin = secondPin;
@@ -23,9 +23,8 @@ public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedLi
 
     //inherited methods
     @Override
-
     public Boolean isStrike() {
-        return null == this.secondPin && this.secondPin == maxPin;
+        return null == this.secondPin && this.firstPin.equals(maxPin);
     }
 
     @Override
@@ -35,7 +34,7 @@ public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedLi
 
     @Override
     public Boolean isMiss() {
-        return this.firstPin != null && this.secondPin != null && this.firstPin + this.secondPin <= maxPin;
+        return this.firstPin != null && this.secondPin != null && this.firstPin + this.secondPin < maxPin;
     }
 
     @Override
@@ -58,9 +57,9 @@ public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedLi
         this.secondPin = pin;
     }
 
+    //TODO
     @Override
     public void addPins(Integer... pins) {
-        //TODO
     }
 
     @Override
@@ -121,9 +120,9 @@ public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedLi
     }
 
     private Integer calcStrikeTurnScore() {
-        Integer bonus = 0, bonusCount = 0;
+        int bonus = 0, bonusCount = 0;
         BowlingTurnImpl bonusTurn = (BowlingTurnImpl) this.getNextItem();
-        for (int i = 0; i < 2 && bonusTurn != null && bonusCount < 2; i++) {
+        for (int i = 0; i < 2 && bonusTurn != null; i++) {
             if (bonusCount < 2 && bonusTurn.getFirstPin() != null) {
                 bonus += bonusTurn.getFirstPin();
                 bonusCount++;
@@ -162,6 +161,6 @@ public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedLi
         else if (this.secondPin > this.maxPin || this.secondPin < 0)
             return false;
         else
-            return this.secondPin == null || (this.firstPin + this.secondPin <= this.maxPin);
+            return this.firstPin + this.secondPin <= this.maxPin;
     }
 }

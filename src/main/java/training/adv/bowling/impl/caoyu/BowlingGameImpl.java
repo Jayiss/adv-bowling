@@ -47,10 +47,33 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
         return null;
     }
 
-    //TODO
     @Override
     public Boolean isGameFinished() {
-        return null;
+        BowlingTurnImpl currentTurn = this.firstTurn;
+        for (int i = 0; i < getMaxTurn() + 2 && null != currentTurn; i++) {
+            if (null == currentTurn.getNextItem()) {
+                if (i + 1 < getMaxTurn()) {
+                    return false;
+                } else if (i + 1 == getMaxTurn()) {//last turn miss, current turn is last turn
+                    return currentTurn.isMiss();
+                } else if (i + 1 == getMaxTurn() + 1) {//last turn spare or strike, current turn is bonus turn one
+                    BowlingTurnImpl lastTurn = (BowlingTurnImpl) currentTurn.getPreviousItem();
+                    boolean strikeFinished = lastTurn.isStrike() &&
+                            currentTurn.getFirstPin() != null && currentTurn.getSecondPin() != null;
+                    boolean spareFinished = lastTurn.isSpare() &&
+                            currentTurn.getFirstPin() != null && currentTurn.getSecondPin() == null;
+                    return strikeFinished || spareFinished;
+                } else if (i + 1 == getMaxTurn() + 2) {//last turn strike, current turn is bonus turn two
+                    BowlingTurnImpl lastTurn = (BowlingTurnImpl) ((BowlingTurnImpl) currentTurn.getPreviousItem()).getPreviousItem();
+                    BowlingTurnImpl bonusTurnOne = (BowlingTurnImpl) currentTurn.getPreviousItem();
+                    return lastTurn.isStrike() && null != bonusTurnOne.getFirstPin() && null == bonusTurnOne.getSecondPin() && null != currentTurn.getFirstPin() && null == currentTurn.getSecondPin();
+                } else
+                    return null;
+            } else {
+                currentTurn = (BowlingTurnImpl) currentTurn.getNextItem();
+            }
+        }
+        return null;//Game not valid
     }
 
     //TODO
@@ -61,7 +84,8 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
 
     @Override
     public void setTurnEntities(BowlingTurnEntity[] turns) {
-        if (null != turns || turns.length == 0) {
+        assert turns != null;
+        if (turns.length == 0) {
             this.firstTurn = new BowlingTurnImpl(null, null, null, this.getMaxPin());
             return;
         }
