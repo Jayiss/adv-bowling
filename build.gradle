@@ -1,3 +1,7 @@
+plugins {
+    id 'java'
+}
+
 apply plugin: 'java'
 
 // In this section you declare where to find the dependencies of your project
@@ -17,4 +21,16 @@ dependencies {
 	compile 'com.h2database:h2:1.4.199'
    
     testCompile 'junit:junit:4.12'
+}
+group 'adv-bowling'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 }
