@@ -16,157 +16,159 @@ public class BowlingGameTest {
 
     @Test
     public void testNoPins() {
-        BowlingGame game = factory.getGame();
+        BowlingGame game = service.getGame();
 
         game.addScores();
-        assertEquals(Integer.valueOf(0), game.getTotalScore());
+        Integer temp = game.getTotalScore();
+        assertEquals(Integer.valueOf(0), (Integer)game.getTotalScore());
     }
 
     @Test
     public void testNegative() {
-        BowlingGame game = factory.getGame();
+        BowlingGame game = service.getGame();
 
         game.addScores(-1);
-        assertEquals(Integer.valueOf(0), game.getTotalScore());
+        Integer temp = game.getTotalScore();
+        assertEquals(Integer.valueOf(0), (Integer) game.getTotalScore());
     }
 
 
     @Test
     public void testPartialStrike() {
-        BowlingGame game = factory.getGame();
+        BowlingGame game = service.getGame();
 
         game.addScores(10, 10, 10);
-        assertEquals(Integer.valueOf(60), game.getTotalScore());
+        assertEquals(Integer.valueOf(60), (Integer)game.getTotalScore());
     }
 
     @Test
     public void testTotalStrike() {
-        BowlingGame game = factory.getGame();
+        BowlingGame game = service.getGame();
 
         game.addScores(10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10);
-        assertEquals(Integer.valueOf(300), game.getTotalScore());
+        assertEquals(Integer.valueOf(300), (Integer)game.getTotalScore());
     }
 
     @Test
     public void testTotalStrikeSeparately() {
-        BowlingGame game = factory.getGame();
+        BowlingGame game = service.getGame();
 
         game.addScores(10, 10, 10);
-        assertEquals(Integer.valueOf(60), game.getTotalScore());
+        assertEquals(Integer.valueOf(60), (Integer)game.getTotalScore());
 
         game.addScores(10, 10, 10, 10, 10, 10, 10, 10, 10);
-        assertEquals(Integer.valueOf(300), game.getTotalScore());
+        assertEquals(Integer.valueOf(300), (Integer)game.getTotalScore());
     }
 
     @Test
     public void testGreaterThanMaxPins() {
-        BowlingGame game = factory.getGame();
+        BowlingGame game = service.getGame();
 
         game.addScores(10, 10, 10);
-        assertEquals(Integer.valueOf(60), game.getTotalScore());
+        assertEquals(Integer.valueOf(60), (Integer)game.getTotalScore());
 
         game.addScores(10, 10, 20);
-        assertEquals(Integer.valueOf(60), game.getTotalScore());
+        assertEquals(Integer.valueOf(60), (Integer)game.getTotalScore());
     }
 
     @Test
     public void testInvalidPins() {
-        BowlingGame game = factory.getGame();
+        BowlingGame game = service.getGame();
 
         game.addScores(10, 10, 10);
-        assertEquals(Integer.valueOf(60), game.getTotalScore());
+        assertEquals(Integer.valueOf(60), (Integer)game.getTotalScore());
 
         game.addScores(5, 6, 7, 8);
-        assertEquals(Integer.valueOf(60), game.getTotalScore());
+        assertEquals(Integer.valueOf(60), (Integer)game.getTotalScore());
     }
 
     @Test
     public void testSpareCalculation() {
-        BowlingGame game = factory.getGame();
+        BowlingGame game = service.getGame();
 
         game.addScores(10, 10, 10);
-        assertEquals(Integer.valueOf(60), game.getTotalScore());
+        assertEquals(Integer.valueOf(60), (Integer)game.getTotalScore());
 
         game.addScores(5, 5, 5, 5);
-        assertEquals(Integer.valueOf(100), game.getTotalScore());
+        assertEquals(Integer.valueOf(100), (Integer)game.getTotalScore());
     }
 
     @Test
     public void testSpareSeparately() {
-        BowlingGame game = factory.getGame();
+        BowlingGame game = service.getGame();
 
         game.addScores(10, 10, 10, 5);
-        assertEquals(Integer.valueOf(75), game.getTotalScore());
+        assertEquals(Integer.valueOf(75), (Integer)game.getTotalScore());
 
         game.addScores(5, 5, 5);
-        assertEquals(Integer.valueOf(100), game.getTotalScore());
+        assertEquals(Integer.valueOf(100), (Integer)game.getTotalScore());
     }
 
     @Test
     public void testExtraTwoPins() {
-        BowlingGame game = factory.getGame();
+        BowlingGame game = service.getGame();
 
         game.addScores(10, 10, 10, 10, 10, 10, 10, 10, 10, 10);
-        assertEquals(Integer.valueOf(270), game.getTotalScore());
+        assertEquals(Integer.valueOf(270), (Integer)game.getTotalScore());
 
         game.addScores(5, 5, 5);
-        assertEquals(Integer.valueOf(270), game.getTotalScore());
+        assertEquals(Integer.valueOf(270), (Integer)game.getTotalScore());
 
         game.addScores(5, 5);
-        assertEquals(Integer.valueOf(285), game.getTotalScore());
+        assertEquals(Integer.valueOf(285), (Integer)game.getTotalScore());
     }
 
     @Test
     public void testExtraTwoPinsWithStrike() {
-        BowlingGame game = factory.getGame();
+        BowlingGame game = service.getGame();
 
         game.addScores(10, 10, 10, 10, 10, 10, 10, 10, 10, 10);
-        assertEquals(Integer.valueOf(270), game.getTotalScore());
+        assertEquals(Integer.valueOf(270), (Integer)game.getTotalScore());
 
         game.addScores(10, 5, 5);
-        assertEquals(Integer.valueOf(270), game.getTotalScore());
+        assertEquals(Integer.valueOf(270), (Integer)game.getTotalScore());
 
         game.addScores(10, 5);
-        assertEquals(Integer.valueOf(295), game.getTotalScore());
+        assertEquals(Integer.valueOf(295), (Integer)game.getTotalScore());
 
     }
 
     @Test
     public void testLastTurnSpareSeparately() {
-        BowlingGame game = factory.getGame();
+        BowlingGame game = service.getGame();
 
         game.addScores(10, 10, 10, 10, 10, 10, 10, 10, 10, 5);
-        assertEquals(Integer.valueOf(255), game.getTotalScore());
+        assertEquals(Integer.valueOf(255), (Integer)game.getTotalScore());
 
         game.addScores(5, 5, 5);
-        assertEquals(Integer.valueOf(255), game.getTotalScore());
+        assertEquals(Integer.valueOf(255), (Integer)game.getTotalScore());
 
         game.addScores(5, 5);
-        assertEquals(Integer.valueOf(270), game.getTotalScore());
+        assertEquals(Integer.valueOf(270), (Integer)game.getTotalScore());
     }
 
     @Test
     public void testFinishedGameNotAcceptNewPins() {
-        BowlingGame game = factory.getGame();
+        BowlingGame game = service.getGame();
 
         game.addScores(10, 10, 10, 10, 10, 10, 10, 10, 5, 5);
-        assertEquals(Integer.valueOf(235), game.getTotalScore());
+        assertEquals(Integer.valueOf(235), (Integer)game.getTotalScore());
 
         game.addScores(5, 5, 5);
-        assertEquals(Integer.valueOf(255), game.getTotalScore());
+        assertEquals(Integer.valueOf(255), (Integer)game.getTotalScore());
 
         game.addScores(5, 5);
-        assertEquals(Integer.valueOf(255), game.getTotalScore());
+        assertEquals(Integer.valueOf(255), (Integer)game.getTotalScore());
     }
 
     @Test
     public void multiThreadTest() throws InterruptedException {
-        List<BowlingGame> games = Arrays.asList(factory.getGame(), factory.getGame(), factory.getGame());
+        List<BowlingGame> games = Arrays.asList(service.getGame(), service.getGame(), service.getGame());
         for (int i = 0; i < 21; i++) {
             games.parallelStream().forEach(g -> g.addScores(5));
         }
         games.stream().forEach(g -> {
-            assertEquals(Integer.valueOf(150), g.getTotalScore());
+            assertEquals(Integer.valueOf(150), (Integer)g.getTotalScore());
         });
     }
 
