@@ -5,7 +5,7 @@ public interface Game<T extends Turn, E extends TurnEntity, G extends GameEntity
     int[] getScores();
 	T[] getTurns();
 	
-	T newTurn();
+	T newTurn();//new
 
 	Boolean isGameFinished();
 
