@@ -36,9 +36,9 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
         BowlingTurnImpl traverse = this.firstTurn;
         while (null != traverse.getNextItem()) {
             result.add(traverse);
-            traverse = (BowlingTurnImpl) traverse.getNextItem();
+            traverse = traverse.getNextItem();
         }
-        return result.toArray(BowlingTurn[]::new);
+        return result.toArray(new BowlingTurn[0]);
     }
 
     //TODO
@@ -49,31 +49,32 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
 
     @Override
     public Boolean isGameFinished() {
-        BowlingTurnImpl currentTurn = this.firstTurn;
-        for (int i = 0; i < getMaxTurn() + 2 && null != currentTurn; i++) {
-            if (null == currentTurn.getNextItem()) {
-                if (i + 1 < getMaxTurn()) {
-                    return false;
-                } else if (i + 1 == getMaxTurn()) {//last turn miss, current turn is last turn
-                    return currentTurn.isMiss();
-                } else if (i + 1 == getMaxTurn() + 1) {//last turn spare or strike, current turn is bonus turn one
-                    BowlingTurnImpl lastTurn = (BowlingTurnImpl) currentTurn.getPreviousItem();
-                    boolean strikeFinished = lastTurn.isStrike() &&
-                            currentTurn.getFirstPin() != null && currentTurn.getSecondPin() != null;
-                    boolean spareFinished = lastTurn.isSpare() &&
-                            currentTurn.getFirstPin() != null && currentTurn.getSecondPin() == null;
-                    return strikeFinished || spareFinished;
-                } else if (i + 1 == getMaxTurn() + 2) {//last turn strike, current turn is bonus turn two
-                    BowlingTurnImpl lastTurn = (BowlingTurnImpl) ((BowlingTurnImpl) currentTurn.getPreviousItem()).getPreviousItem();
-                    BowlingTurnImpl bonusTurnOne = (BowlingTurnImpl) currentTurn.getPreviousItem();
-                    return lastTurn.isStrike() && null != bonusTurnOne.getFirstPin() && null == bonusTurnOne.getSecondPin() && null != currentTurn.getFirstPin() && null == currentTurn.getSecondPin();
-                } else
-                    return null;
-            } else {
-                currentTurn = (BowlingTurnImpl) currentTurn.getNextItem();
-            }
-        }
-        return null;//Game not valid
+        return firstTurn.isGameFinished();
+//        BowlingTurnImpl currentTurn = this.firstTurn;
+//        for (int i = 0; i < getMaxTurn() + 2 && null != currentTurn; i++) {
+//            if (null == currentTurn.getNextItem()) {
+//                if (i + 1 < getMaxTurn()) {
+//                    return false;
+//                } else if (i + 1 == getMaxTurn()) {//last turn miss, current turn is last turn
+//                    return currentTurn.isMiss();
+//                } else if (i + 1 == getMaxTurn() + 1) {//last turn spare or strike, current turn is bonus turn one
+//                    BowlingTurnImpl lastTurn = currentTurn.getPreviousItem();
+//                    boolean strikeFinished = lastTurn.isStrike() &&
+//                            currentTurn.getFirstPin() != null && currentTurn.getSecondPin() != null;
+//                    boolean spareFinished = lastTurn.isSpare() &&
+//                            currentTurn.getFirstPin() != null && currentTurn.getSecondPin() == null;
+//                    return strikeFinished || spareFinished;
+//                } else if (i + 1 == getMaxTurn() + 2) {//last turn strike, current turn is bonus turn two
+//                    BowlingTurnImpl lastTurn = currentTurn.getPreviousItem().getPreviousItem();
+//                    BowlingTurnImpl bonusTurnOne = currentTurn.getPreviousItem();
+//                    return lastTurn.isStrike() && null != bonusTurnOne.getFirstPin() && null == bonusTurnOne.getSecondPin() && null != currentTurn.getFirstPin() && null == currentTurn.getSecondPin();
+//                } else
+//                    return null;
+//            } else {
+//                currentTurn = currentTurn.getNextItem();
+//            }
+//        }
+//        return null;//Game not valid
     }
 
     //TODO
@@ -86,12 +87,13 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
     public void setTurnEntities(BowlingTurnEntity[] turns) {
         assert turns != null;
         if (turns.length == 0) {
-            this.firstTurn = new BowlingTurnImpl(null, null, null, this.getMaxPin());
+            this.firstTurn = new BowlingTurnImpl(gameId, null, null, null, this.getMaxTurn(), this.getMaxPin());
             return;
         }
 
         //set first turn
-        this.firstTurn = new BowlingTurnImpl(null, turns[0].getFirstPin(), turns[0].getSecondPin(), this.getMaxPin());
+        this.firstTurn = new BowlingTurnImpl(gameId, null, turns[0].getFirstPin(), this.getMaxTurn(), turns[0].getSecondPin(),
+                this.getMaxPin());
         BowlingTurnImpl currentTurn = this.firstTurn;
         TurnKey turnKey = new TurnKeyImpl(this.gameId);
         currentTurn.setId(turnKey);
@@ -99,14 +101,13 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
         //set every other turn
         for (int i = 1; i < turns.length; i++) {
             //prepare next turn
-            BowlingTurnImpl nextTurn = new BowlingTurnImpl(currentTurn, turns[i].getFirstPin(), turns[i].getSecondPin(),
-                    this.getMaxPin());
+            BowlingTurnImpl nextTurn = new BowlingTurnImpl(gameId, currentTurn, turns[i].getFirstPin(), turns[i].getSecondPin(), this.getMaxTurn(), this.getMaxPin());
             TurnKey nextTurnKey = new TurnKeyImpl(this.gameId);
             nextTurn.setId(nextTurnKey);
 
             //set next turn
             currentTurn.setNextItem(nextTurn);
-            currentTurn = (BowlingTurnImpl) currentTurn.getNextItem();
+            currentTurn = currentTurn.getNextItem();
         }
     }
 
@@ -116,9 +117,9 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
         BowlingTurnImpl currentTurn = this.firstTurn;
         while (currentTurn != null) {
             bowlingTurnEntities.add(currentTurn);
-            currentTurn = (BowlingTurnImpl) currentTurn.getNextItem();
+            currentTurn = currentTurn.getNextItem();
         }
-        return bowlingTurnEntities.toArray(BowlingTurnEntity[]::new);
+        return bowlingTurnEntities.toArray(new BowlingTurnEntity[0]);
     }
 
     @Override

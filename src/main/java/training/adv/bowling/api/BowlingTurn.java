@@ -1,13 +1,17 @@
 package training.adv.bowling.api;
 
 public interface BowlingTurn extends Turn, Persistable<BowlingTurnEntity> {
-	Boolean isStrike();
-	Boolean isSpare();
-	Boolean isMiss();
-	Integer getFirstPin();
-	Integer getSecondPin();
+    Boolean isStrike();
 
-	void addPins(Integer... pins);
+    Boolean isSpare();
 
-	LinkedList<BowlingTurn> getAsLinkedNode();
+    Boolean isMiss();
+
+    Integer getFirstPin();
+
+    Integer getSecondPin();
+
+    StatusCode addPins(Integer... pins);
+
+    LinkedList<? extends BowlingTurn> getAsLinkedNode();
 }

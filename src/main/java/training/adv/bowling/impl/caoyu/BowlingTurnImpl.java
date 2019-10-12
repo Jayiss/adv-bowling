@@ -1,23 +1,32 @@
 package training.adv.bowling.impl.caoyu;
 
-import training.adv.bowling.api.BowlingTurn;
-import training.adv.bowling.api.BowlingTurnEntity;
-import training.adv.bowling.api.LinkedList;
-import training.adv.bowling.api.TurnKey;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import training.adv.bowling.api.*;
 
-public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedList<BowlingTurn> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedList<BowlingTurnImpl> {
     private BowlingTurnImpl previousItem, nextItem;
     private TurnKey turnKey;
-    private Integer maxPin, firstPin, secondPin;
+    private Integer maxTurn, maxPin, turnCount;
+    private Integer firstPin, secondPin;
 
 
     //constructors
-    //TODO
-    BowlingTurnImpl(BowlingTurnImpl previousItem, Integer firstPin, Integer secondPin, Integer maxPin) {
+    BowlingTurnImpl(Integer gameId, BowlingTurnImpl previousItem, Integer firstPin, Integer secondPin, Integer maxTurn,
+                    Integer maxPin) {
         this.previousItem = previousItem;
         this.firstPin = firstPin;
         this.secondPin = secondPin;
+        this.maxTurn = maxTurn;
         this.maxPin = maxPin;
+        if (null != this.previousItem && null != this.previousItem.turnCount) {
+            this.turnCount = this.previousItem.turnCount + 1;
+        } else {
+            this.turnCount = 1;
+        }
+        this.turnKey = new TurnKeyImpl(gameId);
     }
 
 
@@ -59,11 +68,42 @@ public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedLi
 
     //TODO
     @Override
-    public void addPins(Integer... pins) {
+    public StatusCode addPins(Integer... pins) {
+        return null;
     }
 
+    Boolean isGameFinished() {
+        if (null == this.getNextItem()) {
+            if (this.turnCount < getMaxTurn()) {
+                return false;
+            } else if (this.turnCount == getMaxTurn()) {//last turn miss, current turn is last turn
+                return this.isMiss();
+            } else if (this.turnCount == getMaxTurn() + 1) {//last turn spare or strike, current turn is bonus turn one
+                BowlingTurnImpl lastTurn = this.getPreviousItem();
+                boolean strikeFinished = lastTurn.isStrike() &&
+                        this.getFirstPin() != null && this.getSecondPin() != null;
+                boolean spareFinished = lastTurn.isSpare() &&
+                        this.getFirstPin() != null && this.getSecondPin() == null;
+                return strikeFinished || spareFinished;
+            } else if (this.turnCount == getMaxTurn() + 2) {//last turn strike, current turn is bonus turn two
+                BowlingTurnImpl lastTurn = this.getPreviousItem().getPreviousItem();
+                BowlingTurnImpl bonusTurnOne = this.getPreviousItem();
+                return lastTurn.isStrike() && null != bonusTurnOne.getFirstPin() && null == bonusTurnOne.getSecondPin() && null != this.getFirstPin() && null == this.getSecondPin();
+            } else//game not valid
+                return null;
+        } else {
+            return this.nextItem.isGameFinished();
+        }
+    }
+
+    private int getMaxTurn() {
+        return this.maxTurn;
+    }
+
+
     @Override
-    public LinkedList<BowlingTurn> getAsLinkedNode() {
+
+    public LinkedList<BowlingTurnImpl> getAsLinkedNode() {
         return this;
     }
 
@@ -78,17 +118,17 @@ public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedLi
     }
 
     @Override
-    public BowlingTurn getNextItem() {
+    public BowlingTurnImpl getNextItem() {
         return nextItem;
     }
 
     @Override
-    public void setNextItem(BowlingTurn item) {
-        this.nextItem = (BowlingTurnImpl) item;
+    public void setNextItem(BowlingTurnImpl item) {
+        this.nextItem = item;
     }
 
     @Override
-    public BowlingTurn getPreviousItem() {
+    public BowlingTurnImpl getPreviousItem() {
         return previousItem;
     }
 
@@ -121,7 +161,7 @@ public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedLi
 
     private Integer calcStrikeTurnScore() {
         int bonus = 0, bonusCount = 0;
-        BowlingTurnImpl bonusTurn = (BowlingTurnImpl) this.getNextItem();
+        BowlingTurnImpl bonusTurn = this.getNextItem();
         for (int i = 0; i < 2 && bonusTurn != null; i++) {
             if (bonusCount < 2 && bonusTurn.getFirstPin() != null) {
                 bonus += bonusTurn.getFirstPin();
@@ -131,14 +171,14 @@ public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedLi
                 bonus += bonusTurn.getSecondPin();
                 bonusCount++;
             }
-            bonusTurn = (BowlingTurnImpl) bonusTurn.getNextItem();
+            bonusTurn = bonusTurn.getNextItem();
         }
         return this.maxPin + bonus;
     }
 
     private Integer calcSpareTurnScore() {
         Integer bonus = 0;
-        BowlingTurnImpl bonusTurn = (BowlingTurnImpl) this.getNextItem();
+        BowlingTurnImpl bonusTurn = this.getNextItem();
         if (bonusTurn.getFirstPin() != null) {
             bonus += bonusTurn.getFirstPin();
         }
