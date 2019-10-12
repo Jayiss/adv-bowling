@@ -22,13 +22,13 @@ public class BowlingGameEntityImpl implements BowlingGameEntity {
     }
 
     @Override
-    public void setTurnEntities(BowlingTurnEntity[] turns) {
+    public void setTurnEntities(BowlingTurnEntity[] bowlingTurnEntities) {
         this.bowlingTurnEntities=bowlingTurnEntities;
     }
 
     @Override
     public BowlingTurnEntity[] getTurnEntities() {
-        return new BowlingTurnEntity[0];
+        return bowlingTurnEntities;
     }
 
     @Override

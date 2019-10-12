@@ -38,12 +38,12 @@ public class BowlingTurnEntityImpl implements BowlingTurnEntity {
     }
 
     @Override
-    public void setFirstPin(Integer pin) {
+    public void setFirstPin(Integer firstPin) {
         this.firstPin=firstPin;
     }
 
     @Override
-    public void setSecondPin(Integer pin) {
+    public void setSecondPin(Integer secondPin) {
         this.secondPin=secondPin;
     }
 
@@ -53,7 +53,7 @@ public class BowlingTurnEntityImpl implements BowlingTurnEntity {
     }
 
     @Override
-    public void setId(TurnKey id) {
+    public void setId(TurnKey turnKey) {
         this.turnKey=turnKey;
     }
 }

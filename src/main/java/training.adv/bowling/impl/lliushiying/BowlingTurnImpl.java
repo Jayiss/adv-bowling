@@ -67,7 +67,7 @@ public class BowlingTurnImpl implements BowlingTurn ,LinkedList<BowlingTurn> {
     public StatusCode addPins(Integer... pins) {
         StatusCode code;
         if(pins==null||pins.length==0){
-            return null;
+            return StatusCodeImpl.FINISH;
         }
         Integer pre=null;
         int count=0;
@@ -100,19 +100,17 @@ public class BowlingTurnImpl implements BowlingTurn ,LinkedList<BowlingTurn> {
         if(isValid()){
             //TODO:截取算左边
             pins= Arrays.copyOfRange(pins,count,pins.length);
-            code= addPins(pins);
+            code= next.addPins(pins);
         }else{
             this.getEntity().setFirstPin(pre);
             this.getEntity().setSecondPin(null);
             //return 失败的状态码
-            return null;
+            code= StatusCodeImpl.FAIL;
         }
-        //TODO:失败的状态码
-        //TODO:如果第一个是firstTurn
-        if(code==null){
-            this.getAsLinkedNode().setNextItem(null);
-            if(this.getAsLinkedNode().getPreviousItem()==null){
-            }
+        if(code==StatusCodeImpl.FINISH){
+            //第一个设为null在gameImpl里
+            this.setNextItem(null);
+            code=StatusCodeImpl.SUCCESS;
         }
         return code;
     }
@@ -139,8 +137,8 @@ public class BowlingTurnImpl implements BowlingTurn ,LinkedList<BowlingTurn> {
 
     @Override
     public Integer getScore() {
-        if(!isFinished()){
-            return getFirstPin()==null?0:getFirstPin();
+        if(!isFinished()&&getFirstPin()!=null){
+            return getFirstPin();
         }
         if(isMiss()){
             return getFirstPin()+getSecondPin();
@@ -158,14 +156,14 @@ public class BowlingTurnImpl implements BowlingTurn ,LinkedList<BowlingTurn> {
             if(nextTurn==null||nextTurn.getFirstPin()==null){
                 return 10;
             }
-            BowlingTurn afterNextTurn=this.getNextItem();
+            BowlingTurn afterNextTurn=nextTurn.getAsLinkedNode().getNextItem();
             if(!nextTurn.isFinished()){
                 return 10+nextTurn.getFirstPin();
             }
             if(nextTurn.isSpare()||nextTurn.isMiss()){
                 return 10+nextTurn.getFirstPin()+nextTurn.getSecondPin();
             }
-            if(nextTurn.isStrike()&&(afterNextTurn==null||afterNextTurn.getFirstPin()==null)){
+            if(nextTurn.isStrike()&&afterNextTurn==null){
                 return 10*2;
             }else{
                 return 10*2+afterNextTurn.getFirstPin();
