@@ -95,6 +95,8 @@ public class BowlingTurnImpl implements BowlingTurn, LinkedList<BowlingTurn> {
                 }
             }
         }
+        System.out.println("firstPin: " + turnE.getFirstPin() + "  secondPin: " + turnE.getSecondPin());
+        System.out.println("Score of this turn: "+scoreAcc);
         return scoreAcc;
     }
 
@@ -130,17 +132,17 @@ public class BowlingTurnImpl implements BowlingTurn, LinkedList<BowlingTurn> {
 
     @Override
     public BowlingTurnImpl getNextItem() {
-        return ((BowlingTurnImpl) turnE).getNextItem();
+        return ((BowlingTurnEntityImpl) turnE).getNextItem();
     }
 
     @Override
     public void setNextItem(BowlingTurn item) {
-        ((BowlingTurnImpl) turnE).setNextItem(item);
+        ((BowlingTurnEntityImpl) turnE).setNextItem((BowlingTurnImpl) item);
     }
 
     @Override
     public BowlingTurnImpl getPreviousItem() {
-        return ((BowlingTurnImpl) turnE).getPreviousItem();
+        return ((BowlingTurnEntityImpl) turnE).getPreviousItem();
     }
 
     public Integer getMaxPin() {

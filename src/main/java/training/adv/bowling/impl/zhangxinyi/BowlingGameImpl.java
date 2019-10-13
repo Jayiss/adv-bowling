@@ -19,8 +19,12 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
     @Override
     // Forbidden to use.
     public BowlingTurn[] getTurns() {
-        LinkedList<BowlingTurn> list = firstT.getAsLinkedNode();
-        return convertLinkedList(list);
+        if (firstT != null) {
+            LinkedList<BowlingTurn> list = firstT.getAsLinkedNode();
+            return convertLinkedList(list);
+        } else {
+            return new BowlingTurn[0];
+        }
     }
 
     private BowlingTurn[] convertLinkedList(LinkedList<BowlingTurn> list) {
@@ -33,6 +37,7 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
     }
 
     @Override
+    // Only used for firstT.
     public BowlingTurn newTurn() {
         firstT = new BowlingTurnImpl(null, gameE.getMaxTurn());
         ((BowlingTurnEntityImpl) firstT.getEntity()).setMaxPin(gameE.getMaxPin());
@@ -82,6 +87,7 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
     public StatusCode addScores(Integer... pins) {
         //First Edition Complete
         //Use LinkedList
+        BowlingTurnImpl revertPoint = (BowlingTurnImpl) getPos(getLength() - 1);
         if (!isGameFinished()) {
             int len = getLength();
             BowlingTurn lastNormalT = null;
@@ -89,10 +95,11 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
                 lastNormalT = getPos(gameE.getMaxTurn() - 1);
             }
             int index = 0;
+            BowlingTurn lastT = null;
             if (len >= 1) {
-                BowlingTurn lastT = getPos(len - 1);
+                lastT = getPos(len - 1);
                 if (!lastT.isFinished() && len <= gameE.getMaxTurn()) {
-                    BowlingTurn temp = newTurn();
+                    BowlingTurn temp = newTurn(null);
                     temp.addPins(lastT.getFirstPin(), pins[0]);
                     if (temp.isValid()) {
                         index += 1;
@@ -102,14 +109,19 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
                         }
                     } else {
                         temp = null;
+                        revert(revertPoint);
                         return StatusCodeImpl.INVALID;
                     }
                 }
             }
-            BowlingTurn lastT = getPos(len - 1);
             while (index < pins.length) {
                 if (pins[index].equals(gameE.getMaxPin()) || index == pins.length - 1 || len >= gameE.getMaxTurn()) {
-                    BowlingTurn temp = newTurn((BowlingTurnImpl) lastT);
+                    BowlingTurn temp;
+                    if (lastT != null) {
+                        temp = newTurn((BowlingTurnImpl) lastT);
+                    } else {
+                        temp = newTurn();
+                    }
                     temp.addPins(pins[index]);
                     if (temp.isValid()) {
                         index += 1;
@@ -120,10 +132,16 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
                         }
                     } else {
                         temp = null;
+                        revert(revertPoint);
                         return StatusCodeImpl.INVALID;
                     }
                 } else if (index != pins.length - 1) {
-                    BowlingTurn temp = newTurn((BowlingTurnImpl) lastT);
+                    BowlingTurn temp;
+                    if (lastT != null) {
+                        temp = newTurn((BowlingTurnImpl) lastT);
+                    } else {
+                        temp = newTurn();
+                    }
                     temp.addPins(pins[index], pins[index + 1]);
                     if (temp.isValid()) {
                         len += 1;
@@ -134,25 +152,39 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
                         }
                     } else {
                         temp = null;
+                        revert(revertPoint);
                         return StatusCodeImpl.INVALID;
                     }
                 }
             }
             if (lastNormalT == null || lastNormalT.isMiss()) {
                 if (len > gameE.getMaxTurn()) {
+                    revert(revertPoint);
                     return StatusCodeImpl.TOOMUCH;
                 }
             } else if (lastNormalT.isSpare()) {
                 if (len > gameE.getMaxTurn() + 1) {
+                    revert(revertPoint);
                     return StatusCodeImpl.TOOMUCH;
                 }
             } else {
                 if (len > gameE.getMaxTurn() + 2) {
+                    revert(revertPoint);
                     return StatusCodeImpl.TOOMUCH;
                 }
             }
+        } else {
+            return StatusCodeImpl.TOOMUCH;
         }
-        return null;
+        return StatusCodeImpl.SUCCESS;
+    }
+
+    private void revert(BowlingTurnImpl revertPoint) {
+        if (revertPoint == null) {
+            firstT = null;
+        } else {
+            revertPoint.setNextItem(null);
+        }
     }
 
     @Override
