@@ -1,4 +1,4 @@
-package training.adv.bowling.impl.group2;
+package training.adv.bowling.impl.zhuyurui;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class DBUtil {
 	
-	//private static final String url = "jdbc:h2:file:C:/Users/Alex/data/sample/test";
-	private static final String url = "jdbc:h2:mem:~/test";
+	//private static final String url = "jdbc:h2:file:C:/Users/Alex/data/sample/App";
+	private static final String url = "jdbc:h2:mem:~/App";
 	private static final String user = "sa";
 	private static final String pwd = "";
 	

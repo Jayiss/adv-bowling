@@ -1,4 +1,4 @@
-package training.adv.bowling.impl.group2;
+package training.adv.bowling.impl.zhuyurui;
 
 import training.adv.bowling.api.TurnKey;
 

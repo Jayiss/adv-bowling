@@ -1,10 +1,9 @@
-package training.adv.bowling.impl.group2;
+package training.adv.bowling.impl.zhuyurui;
 
 import training.adv.bowling.api.BowlingTurnEntity;
 import training.adv.bowling.api.TurnKey;
 
 public class BowlingTurnEntityImpl implements BowlingTurnEntity {
-
     private Integer firstPin;
     private Integer secondPin;
     private TurnKey turnKey;

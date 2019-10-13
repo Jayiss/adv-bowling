@@ -1,4 +1,4 @@
-package training.adv.bowling.impl.group2;
+package training.adv.bowling.impl.zhuyurui;
 
 import training.adv.bowling.api.BowlingGameEntity;
 import training.adv.bowling.api.BowlingTurnEntity;
@@ -6,14 +6,24 @@ import training.adv.bowling.api.BowlingTurnEntity;
 public class BowlingGameEntityImpl implements BowlingGameEntity {
     private BowlingTurnEntity[] turnEntities;
     private Integer id;
-    private Integer maxTurn;
-    private Integer maxPin;
+    private int maxPin;
+    private int maxTurn;
+
+    public BowlingGameEntityImpl(Integer maxPin,Integer maxTurn){
+        this.maxPin=maxPin;
+        this.maxTurn=maxTurn;
+    }
+
+    public BowlingGameEntityImpl(Integer id,Integer maxPin,Integer maxTurn){
+        this(maxPin,maxTurn);
+        this.id=id;
+    }
+
 
 
 
     @Override
     public void setTurnEntities(BowlingTurnEntity[] turns) {
-
         turnEntities = turns;
     }
 
