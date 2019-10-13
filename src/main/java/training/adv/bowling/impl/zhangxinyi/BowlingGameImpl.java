@@ -7,9 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity, BowlingGameEntity> implements BowlingGame {
-    private BowlingGameEntity gameE = new BowlingGameEntityImpl();
+    private BowlingGameEntity gameE = new BowlingGameEntityImpl(this);
     private BowlingTurn firstT;
 
+    public void setfirstT(BowlingTurn firstT) {
+        this.firstT = firstT;
+    }
 
     @Override
     public BowlingTurn getFirstTurn() {

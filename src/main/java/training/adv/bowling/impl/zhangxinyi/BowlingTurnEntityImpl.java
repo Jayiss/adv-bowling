@@ -12,6 +12,7 @@ public class BowlingTurnEntityImpl implements BowlingTurnEntity {
     private TurnKey key;
     private BowlingTurnImpl nextItem;
     private BowlingTurnImpl previousItem;
+    public static Integer uniqueId = 2000;
 
     public BowlingTurnEntityImpl() {
     }
