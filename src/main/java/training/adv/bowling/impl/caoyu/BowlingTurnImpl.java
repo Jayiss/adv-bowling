@@ -1,9 +1,11 @@
 package training.adv.bowling.impl.caoyu;
 
+import com.google.common.collect.Lists;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import training.adv.bowling.api.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedList<BowlingTurnImpl> {
@@ -66,9 +68,72 @@ public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedLi
         this.secondPin = pin;
     }
 
-    //TODO
     @Override
     public StatusCode addPins(Integer... pins) {
+//        if (null == pins && 0 == pins.length) {//empty pins
+//            return BowlingAddScoresStatusCode.valueOf("SUCCESSFUL");
+//        }
+        assert null != pins && 0 != pins.length;
+        if (this.isGameFinished()) {//pins not empty, but game already finished
+            return BowlingAddScoresStatusCode.valueOf("TOO_MANY_PINS");
+        } else if (this.isFinished()) {
+            return this.getNextItem().addPins(pins);
+        }
+
+        /*if this turn not finished, get the pins to be added to this turn
+         * pins to add is stored temporarily*/
+        List<Integer> pinsLeft = Arrays.asList(pins);
+        boolean firstPinAdded = false, secondPinAdded = false;
+        if (null == this.firstPin && null == this.secondPin) {//two pins empty
+            this.firstPin = pinsLeft.get(0);
+            pinsLeft.remove(0);
+            firstPinAdded = true;
+            if (!this.isFinished()) {
+                this.secondPin = pinsLeft.get(0);
+                pinsLeft.remove(0);
+                secondPinAdded = true;
+            }
+        } else if (null != this.firstPin && null == this.secondPin) {//second pin empty
+            this.secondPin = pinsLeft.get(0);
+            pinsLeft.remove(0);
+            secondPinAdded = true;
+        }
+
+
+        //check after adding pins
+        if (!this.isValid()) {
+            //roll back
+            if (firstPinAdded)
+                this.firstPin = null;
+            if (secondPinAdded)
+                this.secondPin = null;
+            return BowlingAddScoresStatusCode.valueOf("INVALID_PIN");
+        } else if (0 == pinsLeft.size()) {
+            return BowlingAddScoresStatusCode.valueOf("SUCCESSFUL");
+        } else if (this.isGameFinished() && 0 < pinsLeft.size()) {
+            //roll back
+            if (firstPinAdded)
+                this.firstPin = null;
+            if (secondPinAdded)
+                this.secondPin = null;
+            return BowlingAddScoresStatusCode.valueOf("TOO_MANY_PINS");
+        }
+
+        //pins left add to next turn
+        assert null == this.nextItem;
+        BowlingTurnImpl nextTurnToAdd = new BowlingTurnImpl(this.turnKey.getForeignId(), this, null, null, this.maxTurn,
+                this.maxPin);
+        StatusCode nextTurnAddPinsStatusCode = nextTurnToAdd.addPins(pinsLeft.toArray(new Integer[0]));
+        if ("SUCCESSFUL".equals(nextTurnAddPinsStatusCode.getMessage())) {
+            this.nextItem = nextTurnToAdd;
+        } else {
+            //roll back
+            if (firstPinAdded)
+                this.firstPin = null;
+            if (secondPinAdded)
+                this.secondPin = null;
+            return nextTurnAddPinsStatusCode;
+        }
         return null;
     }
 

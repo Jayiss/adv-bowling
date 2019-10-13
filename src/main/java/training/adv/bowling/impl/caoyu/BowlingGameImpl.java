@@ -80,7 +80,13 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
     //TODO
     @Override
     public StatusCode addScores(Integer... pins) {
-        return null;
+        if (this.isGameFinished()) {
+            return BowlingAddScoresStatusCode.valueOf("GAME_ALREADY_FINISHED");
+        } else if (null == pins || pins.length == 0) {
+            return BowlingAddScoresStatusCode.valueOf("SUCCESSFUL");
+        } else {
+            return this.firstTurn.addPins(pins);
+        }
     }
 
     @Override
