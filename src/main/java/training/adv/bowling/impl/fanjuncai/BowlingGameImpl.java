@@ -7,12 +7,16 @@ import java.util.ArrayList;
 
 public class BowlingGameImpl implements BowlingGame {
 
-    private BowlingTurn firstTurn;
+    private BowlingTurnImpl firstTurn = new BowlingTurnImpl(null);
     private BowlingGameEntity bowlingGameEntity = new BowlingGameEntityImpl();
-    public LinkedList<BowlingTurn> bowlingTurnLinkedList = new LinkedListImpl();
+    private Integer tursNum = 1;
 
-    public BowlingGameImpl(){
-        this.bowlingTurnLinkedList.setNextItem(this.firstTurn);
+    public Integer getTursNum() {
+        return tursNum;
+    }
+
+    public void setTursNum(Integer tursNum) {
+        this.tursNum = tursNum;
     }
 
     @Override
@@ -32,47 +36,61 @@ public class BowlingGameImpl implements BowlingGame {
     public int[] getScores() {
         int[] scores = new int[bowlingGameEntity.getMaxTurn()];
         int count = 0;
-        for(BowlingTurn bowlingTurn:getTurns())
+        for(BowlingTurn bowlingTurn:getTurns()){
             scores[count] = bowlingTurn.getScore();
+            count++;
+            if(count==bowlingGameEntity.getMaxTurn())
+                return scores;
+        }
+
         return scores;
     }
 
     @Override
     public BowlingTurn[] getTurns() {
-        return null;
-
-        /*
-        if(getFirstTurn()==null)
-            return null;
-        else{
-            ArrayList<BowlingTurn> bowlingTurns = new ArrayList<>();
-            LinkedList<BowlingTurn> bowlingTurnLinkedList= new LinkedListImpl();
-            BowlingTurn bowlingTurn = bowlingTurnLinkedList.getNextItem();
-            while(bowlingTurn !=null){
-                bowlingTurns.add(bowlingTurnLinkedList.getNextItem());
-                bowlingTurnLinkedList = bowlingTurn.getAsLinkedNode();
-                bowlingTurn = bowlingTurnLinkedList.getNextItem();
-            }
-            return bowlingTurns.toArray(new BowlingTurn[0]);
+        ArrayList<BowlingTurn> bowlingTurns = new ArrayList<>();
+        BowlingTurnImpl bowlingTurn = (BowlingTurnImpl) this.firstTurn;
+        while(bowlingTurn!=null){
+            bowlingTurns.add(bowlingTurn);
+            bowlingTurn = (BowlingTurnImpl) bowlingTurn.getNextItem();
         }
-         */
+        return bowlingTurns.toArray(new BowlingTurn[0]);
+
     }
 
     @Override
     public BowlingTurn newTurn() {
-        return new BowlingTurnImpl();
+        return null;
     }
 
     @Override
     public Boolean isGameFinished() {
-
-        return null;
+        BowlingTurn[] bowlingTurns = getTurns();
+        Integer turnLength = bowlingTurns.length;
+        if(turnLength<bowlingGameEntity.getMaxTurn())
+            return false;
+        else {
+            if(turnLength==bowlingGameEntity.getMaxTurn()){
+                if(!bowlingTurns[turnLength-1].isFinished()&&bowlingTurns[turnLength-1].isSpare())
+                    return true;
+                else
+                    return false;
+            }
+            else if(turnLength==bowlingGameEntity.getMaxTurn()+1){
+                if(bowlingTurns[bowlingGameEntity.getMaxTurn()].getSecondPin()==null
+                &&bowlingTurns[bowlingGameEntity.getMaxTurn()-1].isStrike())
+                    return false;
+                else
+                    return true;
+            }
+        }
+        return true;
     }
 
     @Override
     public StatusCode addScores(Integer... pins) {
-
-        return null;
+        tursNum = 1;
+        return firstTurn.addPins(pins);
     }
 
     @Override

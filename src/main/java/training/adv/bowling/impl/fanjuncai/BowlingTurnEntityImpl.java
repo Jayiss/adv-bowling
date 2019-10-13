@@ -8,6 +8,24 @@ public class BowlingTurnEntityImpl implements BowlingTurnEntity {
     private Integer firstPin;
     private Integer secondPin;
     private TurnKey id;
+    private Integer MaxPin = 10;
+    private Integer MaxTurn = 10;
+
+    public Integer getMaxTurn() {
+        return MaxTurn;
+    }
+
+    public void setMaxTurn(Integer maxTurn) {
+        MaxTurn = maxTurn;
+    }
+
+    public Integer getMaxPin() {
+        return MaxPin;
+    }
+
+    public void setMaxPin(Integer maxPin) {
+        MaxPin = maxPin;
+    }
 
     @Override
     public Integer getFirstPin() {
