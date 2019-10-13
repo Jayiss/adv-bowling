@@ -5,5 +5,4 @@ public interface GameEntity<T extends TurnEntity> extends Entity<Integer> {
 	T[] getTurnEntities();
 	
 	Integer getMaxTurn();
-
 }
