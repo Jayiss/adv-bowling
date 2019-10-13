@@ -37,12 +37,10 @@ public class BowlingGameImpl  implements BowlingGame {
         }
         if(!isGameFinished()){
             for(Integer s:scores){
-                System.out.println(s);
                 sum+=s;
             }
         }else{
             for(int i=0;i<getEntity().getMaxTurn();i++){
-                System.out.println("score："+scores[i]);
                 sum+=scores[i];
             }
         }
@@ -128,7 +126,7 @@ public class BowlingGameImpl  implements BowlingGame {
         }*/
 
         if(code==StatusCodeImpl.FAIL||(!testReer()&&code==StatusCodeImpl.SUCCESS)){
-            //超出：回退
+            //错误或超出：回退
             lastTurn.getEntity().setSecondPin(preSecond);
             lastTurn.getEntity().setFirstPin(preFirst);
             lastTurn.getAsLinkedNode().setNextItem(null);
