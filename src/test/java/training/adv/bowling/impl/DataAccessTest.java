@@ -1,4 +1,4 @@
-package impl;
+package training.adv.bowling.impl;
 
 import org.h2.tools.RunScript;
 import org.junit.After;
@@ -7,7 +7,10 @@ import org.junit.Test;
 import training.adv.bowling.api.*;
 import training.adv.bowling.impl.DBUtil;
 import training.adv.bowling.impl.GameService;
+import training.adv.bowling.impl.lliushiying.BowlingGameEntityImpl;
 import training.adv.bowling.impl.lliushiying.BowlingGameFactoryImpl;
+import training.adv.bowling.impl.lliushiying.BowlingTurnEntityImpl;
+import training.adv.bowling.impl.lliushiying.TurnKeyImpl;
 
 
 import java.io.File;
@@ -22,10 +25,10 @@ import static org.junit.Assert.assertNull;
 
 public class DataAccessTest {
 	
-	private GameService bowlingService = new GameService();
+
 	private BowlingGameFactoryImpl factory=BowlingGameFactoryImpl.getInstance();
 	private Connection conn= DBUtil.getConnection();
-
+	private GameService bowlingService = new GameService();
 	@Before
 	public void before() {
 		String path = ClassLoader.getSystemResource("script/setup.sql").getPath();
@@ -34,7 +37,6 @@ public class DataAccessTest {
 				FileReader fr = new FileReader(new File(path))) {
 			conn.setAutoCommit(true);
 			RunScript.execute(conn, fr);
-			System.out.println("enter");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -75,7 +77,7 @@ public class DataAccessTest {
 
 	//多次save load
 	@Test
-	public void testSave2() {
+	public void testSaveAndLoad() {
 		BowlingGame game = factory.getGame();
 		game.addScores(10, 10, 10);
 		bowlingService.save(game);
@@ -104,7 +106,7 @@ public class DataAccessTest {
 		assertEquals(Integer.valueOf(1001), entity.getId());
 		assertEquals(Integer.valueOf(10), entity.getMaxTurn());
 		assertEquals(12, game.getTurns().length);
-		assertEquals(Integer.valueOf(300), game.getTotalScore());
+		assertEquals(300, game.getTotalScore());
 	}
 	
 	//Prepared data in db.
