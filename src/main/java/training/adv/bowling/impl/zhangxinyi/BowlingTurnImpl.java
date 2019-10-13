@@ -96,7 +96,7 @@ public class BowlingTurnImpl implements BowlingTurn, LinkedList<BowlingTurn> {
             }
         }
         System.out.println("firstPin: " + turnE.getFirstPin() + "  secondPin: " + turnE.getSecondPin());
-        System.out.println("Score of this turn: "+scoreAcc);
+        System.out.println("Score of this turn: " + scoreAcc);
         return scoreAcc;
     }
 
@@ -126,7 +126,7 @@ public class BowlingTurnImpl implements BowlingTurn, LinkedList<BowlingTurn> {
             Integer first = getFirstPin();
             Integer second = getSecondPin();
             return first >= 0 && first <= getMaxPin() && second >= 0
-                    && second <= getMaxPin();
+                    && second <= getMaxPin() && first + second <= getMaxPin();
         }
     }
 

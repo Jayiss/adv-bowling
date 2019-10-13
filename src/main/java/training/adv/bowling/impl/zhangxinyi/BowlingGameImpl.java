@@ -66,7 +66,7 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
     private Integer getLength() {
         int len = 0;
         BowlingTurn temp = firstT;
-        if (temp != null) {
+        while (temp != null) {
             len += 1;
             temp = ((BowlingTurnImpl) temp).getNextItem();
         }
@@ -83,10 +83,12 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
     }
 
     @Override
-    // TODO: revert module
     public StatusCode addScores(Integer... pins) {
         //First Edition Complete
         //Use LinkedList
+        System.out.println();
+        System.out.println("Now Length: " + getLength());
+        boolean hasSetSecondPin = false;
         BowlingTurnImpl revertPoint = (BowlingTurnImpl) getPos(getLength() - 1);
         if (!isGameFinished()) {
             int len = getLength();
@@ -104,12 +106,13 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
                     if (temp.isValid()) {
                         index += 1;
                         lastT.getEntity().setSecondPin(pins[0]);
+                        hasSetSecondPin = true;
                         if (len == gameE.getMaxTurn()) {
                             lastNormalT = temp;
                         }
                     } else {
                         temp = null;
-                        revert(revertPoint);
+                        revert(revertPoint, hasSetSecondPin);
                         return StatusCodeImpl.INVALID;
                     }
                 }
@@ -126,13 +129,16 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
                     if (temp.isValid()) {
                         index += 1;
                         len += 1;
+                        if (lastT != null) {
+                            ((BowlingTurnImpl) lastT).setNextItem(temp);
+                        }
                         lastT = temp;
                         if (len == gameE.getMaxTurn()) {
                             lastNormalT = temp;
                         }
                     } else {
                         temp = null;
-                        revert(revertPoint);
+                        revert(revertPoint, hasSetSecondPin);
                         return StatusCodeImpl.INVALID;
                     }
                 } else if (index != pins.length - 1) {
@@ -145,6 +151,9 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
                     temp.addPins(pins[index], pins[index + 1]);
                     if (temp.isValid()) {
                         len += 1;
+                        if (lastT != null) {
+                            ((BowlingTurnImpl) lastT).setNextItem(temp);
+                        }
                         lastT = temp;
                         index += 2;
                         if (len == gameE.getMaxTurn()) {
@@ -152,24 +161,24 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
                         }
                     } else {
                         temp = null;
-                        revert(revertPoint);
+                        revert(revertPoint, hasSetSecondPin);
                         return StatusCodeImpl.INVALID;
                     }
                 }
             }
             if (lastNormalT == null || lastNormalT.isMiss()) {
                 if (len > gameE.getMaxTurn()) {
-                    revert(revertPoint);
+                    revert(revertPoint, hasSetSecondPin);
                     return StatusCodeImpl.TOOMUCH;
                 }
             } else if (lastNormalT.isSpare()) {
                 if (len > gameE.getMaxTurn() + 1) {
-                    revert(revertPoint);
+                    revert(revertPoint, hasSetSecondPin);
                     return StatusCodeImpl.TOOMUCH;
                 }
             } else {
                 if (len > gameE.getMaxTurn() + 2) {
-                    revert(revertPoint);
+                    revert(revertPoint, hasSetSecondPin);
                     return StatusCodeImpl.TOOMUCH;
                 }
             }
@@ -179,11 +188,14 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
         return StatusCodeImpl.SUCCESS;
     }
 
-    private void revert(BowlingTurnImpl revertPoint) {
+    private void revert(BowlingTurnImpl revertPoint, boolean hasSetSecondPin) {
         if (revertPoint == null) {
             firstT = null;
         } else {
             revertPoint.setNextItem(null);
+            if (hasSetSecondPin) {
+                revertPoint.getEntity().setSecondPin(null);
+            }
         }
     }
 
