@@ -7,8 +7,9 @@ import training.adv.bowling.api.LinkedList;
 public class BowlingTurnImpl implements BowlingTurn, LinkedList<BowlingTurn> {
     private BowlingTurnEntity turnE = new BowlingTurnEntityImpl();
 
-    public BowlingTurnImpl(BowlingTurnImpl prev) {
-        ((BowlingTurnEntityImpl)turnE).setPreviousItem(prev);
+    public BowlingTurnImpl(BowlingTurnImpl prev, Integer maxTurn) {
+        ((BowlingTurnEntityImpl) turnE).setPreviousItem(prev);
+        ((BowlingTurnEntityImpl) turnE).setMaxTurn(maxTurn);
     }
 
     @Override
@@ -44,9 +45,11 @@ public class BowlingTurnImpl implements BowlingTurn, LinkedList<BowlingTurn> {
     }
 
     @Override
-    // Useless?
     public void addPins(Integer... pins) {
-
+        turnE.setFirstPin(pins[0]);
+        if (pins.length == 2) {
+            turnE.setSecondPin(pins[1]);
+        }
     }
 
     @Override
@@ -66,8 +69,51 @@ public class BowlingTurnImpl implements BowlingTurn, LinkedList<BowlingTurn> {
 
     @Override
     public Integer getScore() {
-        //TODO
-        return 0;
+        int scoreAcc = 0;
+        if (getOwnPos() <= ((BowlingTurnEntityImpl) turnE).getMaxTurn()) {
+            scoreAcc += getSingleTurnScore(this);
+            if (isSpare() && ((BowlingTurnEntityImpl) turnE).getNextItem() != null) {
+                scoreAcc += ((BowlingTurnEntityImpl) turnE).getNextItem().getFirstPin();
+            }
+            if (isStrike() && ((BowlingTurnEntityImpl) turnE).getNextItem() != null) {
+                if (((BowlingTurnEntityImpl) ((BowlingTurnEntityImpl) turnE).getNextItem().getEntity()).getNextItem()
+                        == null) {
+                    scoreAcc += getSingleTurnScore(((BowlingTurnEntityImpl) turnE).getNextItem());
+                } else {
+                    if (((BowlingTurnEntityImpl) turnE).getNextItem().isStrike()) {
+                        scoreAcc += ((BowlingTurnEntityImpl) turnE).getMaxTurn() + ((BowlingTurnEntityImpl)
+                                ((BowlingTurnEntityImpl) turnE).getNextItem().getEntity()).getNextItem().getFirstPin();
+                    } else {
+                        if (((BowlingTurnEntityImpl) turnE).getNextItem().isFinished()) {
+                            scoreAcc += getSingleTurnScore(((BowlingTurnEntityImpl) turnE).getNextItem());
+                        } else {
+                            scoreAcc += ((BowlingTurnEntityImpl) turnE).getNextItem().getFirstPin() +
+                                    ((BowlingTurnEntityImpl) ((BowlingTurnEntityImpl) turnE).getNextItem().getEntity()).
+                                            getNextItem().getFirstPin();
+                        }
+                    }
+                }
+            }
+        }
+        return scoreAcc;
+    }
+
+    private Integer getSingleTurnScore(BowlingTurnImpl turn) {
+        if (turn.getSecondPin() != null) {
+            return turn.getFirstPin() + turn.getSecondPin();
+        } else {
+            return turn.getFirstPin();
+        }
+    }
+
+    private Integer getOwnPos() {
+        BowlingTurnImpl now = this;
+        int acc = 1;
+        while (now.getPreviousItem() != null) {
+            now = now.getPreviousItem();
+            acc += 1;
+        }
+        return acc;
     }
 
     @Override
@@ -84,19 +130,17 @@ public class BowlingTurnImpl implements BowlingTurn, LinkedList<BowlingTurn> {
 
     @Override
     public BowlingTurnImpl getNextItem() {
-        //TODO
-        return null;
+        return ((BowlingTurnImpl) turnE).getNextItem();
     }
 
     @Override
     public void setNextItem(BowlingTurn item) {
-
+        ((BowlingTurnImpl) turnE).setNextItem(item);
     }
 
     @Override
     public BowlingTurnImpl getPreviousItem() {
-        //TODO
-        return null;
+        return ((BowlingTurnImpl) turnE).getPreviousItem();
     }
 
     public Integer getMaxPin() {

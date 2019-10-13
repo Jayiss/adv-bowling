@@ -34,13 +34,13 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
 
     @Override
     public BowlingTurn newTurn() {
-        firstT = new BowlingTurnImpl(null);
+        firstT = new BowlingTurnImpl(null, gameE.getMaxTurn());
         ((BowlingTurnEntityImpl) firstT.getEntity()).setMaxPin(gameE.getMaxPin());
         return firstT;
     }
 
     public BowlingTurn newTurn(BowlingTurnImpl prev) {
-        BowlingTurn turn = new BowlingTurnImpl(prev);
+        BowlingTurn turn = new BowlingTurnImpl(prev, gameE.getMaxTurn());
         ((BowlingTurnEntityImpl) turn.getEntity()).setMaxPin(gameE.getMaxPin());
         return turn;
     }
@@ -78,8 +78,9 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
     }
 
     @Override
+    // TODO: revert module
     public StatusCode addScores(Integer... pins) {
-        //TODO
+        //First Edition Complete
         //Use LinkedList
         if (!isGameFinished()) {
             int len = getLength();
@@ -101,22 +102,53 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
                         }
                     } else {
                         temp = null;
-                        return new StatusCodeImpl("Invalid");
+                        return StatusCodeImpl.INVALID;
                     }
                 }
             }
             BowlingTurn lastT = getPos(len - 1);
             while (index < pins.length) {
-                if (pins[index] == gameE.getMaxPin() || index == pins.length - 1 || len >= gameE.getMaxTurn()) {
+                if (pins[index].equals(gameE.getMaxPin()) || index == pins.length - 1 || len >= gameE.getMaxTurn()) {
                     BowlingTurn temp = newTurn((BowlingTurnImpl) lastT);
                     temp.addPins(pins[index]);
                     if (temp.isValid()) {
-
+                        index += 1;
                         len += 1;
+                        lastT = temp;
                         if (len == gameE.getMaxTurn()) {
                             lastNormalT = temp;
                         }
+                    } else {
+                        temp = null;
+                        return StatusCodeImpl.INVALID;
                     }
+                } else if (index != pins.length - 1) {
+                    BowlingTurn temp = newTurn((BowlingTurnImpl) lastT);
+                    temp.addPins(pins[index], pins[index + 1]);
+                    if (temp.isValid()) {
+                        len += 1;
+                        lastT = temp;
+                        index += 2;
+                        if (len == gameE.getMaxTurn()) {
+                            lastNormalT = temp;
+                        }
+                    } else {
+                        temp = null;
+                        return StatusCodeImpl.INVALID;
+                    }
+                }
+            }
+            if (lastNormalT == null || lastNormalT.isMiss()) {
+                if (len > gameE.getMaxTurn()) {
+                    return StatusCodeImpl.TOOMUCH;
+                }
+            } else if (lastNormalT.isSpare()) {
+                if (len > gameE.getMaxTurn() + 1) {
+                    return StatusCodeImpl.TOOMUCH;
+                }
+            } else {
+                if (len > gameE.getMaxTurn() + 2) {
+                    return StatusCodeImpl.TOOMUCH;
                 }
             }
         }

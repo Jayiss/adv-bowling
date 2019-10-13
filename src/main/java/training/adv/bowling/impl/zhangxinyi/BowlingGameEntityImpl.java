@@ -16,12 +16,13 @@ public class BowlingGameEntityImpl implements BowlingGameEntity {
     @Override
     // Only used in DB
     public void setTurnEntities(BowlingTurnEntity[] turns) {
-
+        //TODO
     }
 
     @Override
     // Only used in DB
     public BowlingTurnEntity[] getTurnEntities() {
+        //TODO
         return new BowlingTurnEntity[0];
     }
 

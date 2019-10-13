@@ -6,6 +6,7 @@ import training.adv.bowling.api.TurnKey;
 
 public class BowlingTurnEntityImpl implements BowlingTurnEntity {
     private Integer maxPin;
+    private Integer maxTurn;
     private Integer firstPin;
     private Integer secondPin;
     private TurnKey key;
@@ -67,5 +68,13 @@ public class BowlingTurnEntityImpl implements BowlingTurnEntity {
 
     public void setPreviousItem(BowlingTurnImpl previousItem) {
         this.previousItem = previousItem;
+    }
+
+    public Integer getMaxTurn() {
+        return maxTurn;
+    }
+
+    public void setMaxTurn(Integer maxTurn) {
+        this.maxTurn = maxTurn;
     }
 }
