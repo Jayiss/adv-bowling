@@ -6,6 +6,6 @@ public class GameService {
 
 
 	public void play() {
-		
+
 	}
 }
