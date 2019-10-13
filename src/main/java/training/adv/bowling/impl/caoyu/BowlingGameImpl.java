@@ -17,6 +17,12 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
         firstTurn = new BowlingTurnImpl(gameId, null, null, null, this.maxTurn, this.maxPin);
     }
 
+    public BowlingGameImpl(Integer gameId, Integer maxTurn, Integer maxPin) {
+        this.gameId = gameId;
+        this.maxTurn = maxTurn;
+        this.maxPin = maxPin;
+    }
+
     @Override
     public BowlingTurn getFirstTurn() {
         return this.firstTurn;
@@ -41,7 +47,11 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
     public BowlingTurn[] getTurns() {
         ArrayList<BowlingTurn> result = new ArrayList<>();
         BowlingTurnImpl traverse = this.firstTurn;
-        for (int i = 0; i < this.maxTurn - 1 && null != traverse.getNextItem(); i++) {
+//        for (int i = 0; i < this.maxTurn - 1 && null != traverse.getNextItem(); i++) {
+//            result.add(traverse);
+//            traverse = traverse.getNextItem();
+//        }
+        while (null != traverse.getNextItem()) {
             result.add(traverse);
             traverse = traverse.getNextItem();
         }
@@ -113,22 +123,16 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
         }
 
         //set first turn
-        this.firstTurn = new BowlingTurnImpl(gameId, null, turns[0].getFirstPin(), this.getMaxTurn(), turns[0].getSecondPin(),
+        this.firstTurn = new BowlingTurnImpl(gameId, null, null, null, this.getMaxTurn(),
                 this.getMaxPin());
-        BowlingTurnImpl currentTurn = this.firstTurn;
-        TurnKey turnKey = new TurnKeyImpl(this.gameId);
-        currentTurn.setId(turnKey);
-
-        //set every other turn
-        for (int i = 1; i < turns.length; i++) {
-            //prepare next turn
-            BowlingTurnImpl nextTurn = new BowlingTurnImpl(gameId, currentTurn, turns[i].getFirstPin(), turns[i].getSecondPin(), this.getMaxTurn(), this.getMaxPin());
-            TurnKey nextTurnKey = new TurnKeyImpl(this.gameId);
-            nextTurn.setId(nextTurnKey);
-
-            //set next turn
-            currentTurn.setNextItem(nextTurn);
-            currentTurn = currentTurn.getNextItem();
+        for (BowlingTurnEntity currentTurn :
+                turns) {
+            if (null != currentTurn.getFirstPin()) {
+                this.addScores(currentTurn.getFirstPin());
+            }
+            if (null != currentTurn.getSecondPin()) {
+                this.addScores(currentTurn.getSecondPin());
+            }
         }
     }
 

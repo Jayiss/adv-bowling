@@ -2,7 +2,6 @@ package training.adv.bowling.impl.caoyu;
 
 import training.adv.bowling.api.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +28,14 @@ public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedLi
         this.turnKey = new TurnKeyImpl(gameId);
     }
 
+    public BowlingTurnImpl(Integer maxPin, Integer maxTurn,Integer turnCount) {
+        this.maxPin = maxPin;
+        this.maxTurn = maxTurn;
+        this.turnCount = turnCount;
+    }
+
+    public BowlingTurnImpl() {
+    }
 
     //inherited methods
     @Override
@@ -216,7 +223,7 @@ public class BowlingTurnImpl implements BowlingTurn, BowlingTurnEntity, LinkedLi
 
     @Override
     public Integer getScore() {
-        if (null == this.firstPin && null == this.secondPin)
+        if (this.turnCount > maxTurn || (null == this.firstPin && null == this.secondPin))
             return 0;
         int currentScore = 0;
         if (isMiss())//miss
