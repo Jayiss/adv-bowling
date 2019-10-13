@@ -10,6 +10,13 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
     private Integer maxTurn, maxPin;
     private BowlingTurnImpl firstTurn;
 
+    public BowlingGameImpl(Integer maxTurn, Integer maxPin) {
+        this.maxTurn = maxTurn;
+        this.maxPin = maxPin;
+        gameId = UidUtil.getNewGameId();
+        firstTurn = new BowlingTurnImpl(gameId, null, null, null, this.maxTurn, this.maxPin);
+    }
+
     @Override
     public BowlingTurn getFirstTurn() {
         return this.firstTurn;
@@ -34,10 +41,11 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
     public BowlingTurn[] getTurns() {
         ArrayList<BowlingTurn> result = new ArrayList<>();
         BowlingTurnImpl traverse = this.firstTurn;
-        while (null != traverse.getNextItem()) {
+        for (int i = 0; i < this.maxTurn - 1 && null != traverse.getNextItem(); i++) {
             result.add(traverse);
             traverse = traverse.getNextItem();
         }
+        result.add(traverse);
         return result.toArray(new BowlingTurn[0]);
     }
 
@@ -80,9 +88,16 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
     //TODO
     @Override
     public StatusCode addScores(Integer... pins) {
+        for (Integer pin :
+                pins) {
+            if (null == pin || pin < 0 || pin > this.maxPin) {
+                return BowlingAddScoresStatusCode.valueOf("INVALID_PIN");
+            }
+        }
+
         if (this.isGameFinished()) {
             return BowlingAddScoresStatusCode.valueOf("GAME_ALREADY_FINISHED");
-        } else if (null == pins || pins.length == 0) {
+        } else if (pins.length == 0) {
             return BowlingAddScoresStatusCode.valueOf("SUCCESSFUL");
         } else {
             return this.firstTurn.addPins(pins);
