@@ -12,7 +12,7 @@ import training.adv.bowling.impl.caokeke.BowlingGameImpl;
 
 public class BowlingGameTest {
 	
-	private BowlingGame game = new BowlingGameImpl();
+	private BowlingGame game = new BowlingGameImpl(10,10);
 
 	@Test
 	public void testNoPins() {
@@ -137,6 +137,19 @@ public class BowlingGameTest {
 		
 		game.addScores(5, 5);
 		assertEquals(Integer.valueOf(255), (Integer)game.getTotalScore());
+	}
+
+	@Test
+	public void multiThreadTest() throws InterruptedException {
+		List<BowlingGame> games = Arrays.asList(new BowlingGameImpl(10,10)
+				,new BowlingGameImpl(10,10)
+				,new BowlingGameImpl(10,10));
+		for (int i = 0; i < 21; i++) {
+			games.parallelStream().forEach(g -> g.addScores(5));
+		}
+		games.stream().forEach(g -> {
+			assertEquals(Integer.valueOf(150), Integer.valueOf(g.getTotalScore()));
+		});
 	}
 	
 }

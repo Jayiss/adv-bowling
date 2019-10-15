@@ -3,7 +3,9 @@ package training.adv.bowling.impl.caokeke;
 import training.adv.bowling.api.StatusCode;
 
 public enum StatusCodeImpl implements StatusCode {
-    ADD_SUCCESS("add success","0"), ADD_FAILED("add error", "1");
+    ADD_SUCCESS("add success","0"),
+    ADD_FAILED("add error", "1"),
+    ADD_FINISHED("add finished","2");
 
     private String message;
     private String code;
