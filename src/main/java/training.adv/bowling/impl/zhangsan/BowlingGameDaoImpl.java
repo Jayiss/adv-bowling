@@ -17,7 +17,6 @@ public class BowlingGameDaoImpl extends AbstractDao<BowlingGameEntity, BowlingGa
 
     @Override
     protected BowlingGame doBuildDomain(BowlingGameEntity entity) {
-
         return null;
     }
 
