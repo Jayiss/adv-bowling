@@ -1,0 +1,2 @@
+drop table GAME;
+DROP TABLE TURN;
