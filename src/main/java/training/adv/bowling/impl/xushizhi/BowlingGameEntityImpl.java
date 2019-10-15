@@ -5,15 +5,16 @@ import training.adv.bowling.api.BowlingTurnEntity;
 
 public class BowlingGameEntityImpl implements BowlingGameEntity {
 
+    private Integer id;  // DB Game id_game
     private static int MAX_PIN = 10;  // Set default bowling game max pin to 10
     private static int MAX_TURN = 10;  // Set default bowling game max turn to 10
-    private BowlingTurnEntity[] bowlingTurnEntities;
-    private Integer id;  // ID Game  //TODO - Remove All ID Game
 
-    public BowlingGameEntityImpl(Integer id, int Max_Pin, int Max_Turn) {
+    private BowlingTurnEntity[] bowlingTurnEntities;
+
+    public BowlingGameEntityImpl(Integer id, int Max_Turn, int Max_Pin) {
         this.id = id;
-        MAX_PIN = Max_Pin;
         MAX_TURN = Max_Turn;
+        MAX_PIN = Max_Pin;
     }
 
     @Override

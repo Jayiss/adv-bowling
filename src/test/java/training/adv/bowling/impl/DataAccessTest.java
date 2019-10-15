@@ -18,14 +18,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class DataAccessTest {
+
     private BowlingGameFactoryImpl factory = new BowlingGameFactoryImpl();
 
     @Before
     public void before() {
         String path_before = "/src/main/java/training/adv/bowling/impl/xushizhi/resources/scripts/setup.sql";
         String path = System.getProperty("user.dir") + path_before;
-        // String path = ClassLoader.getSystemResource("script/setup.sql").getPath();
-        System.out.println(path);
+        System.out.println("SQL Setup File Path : " + path.replace("%20", " "));
+
         try (Connection conn = DBUtil.getConnection();
              FileReader fr = new FileReader(new File(path))) {
             RunScript.execute(conn, fr);
@@ -39,8 +40,8 @@ public class DataAccessTest {
     public void after() {
         String path_after = "/src/main/java/training/adv/bowling/impl/xushizhi/resources/scripts/clean.sql";
         String path = System.getProperty("user.dir") + path_after;
-        // String path = ClassLoader.getSystemResource("script/clean.sql").getPath();
-        System.out.println(path);
+        System.out.println("SQL Clean File Path : " + path.replace("%20", " "));
+
         try (Connection conn = DBUtil.getConnection();
              FileReader fr = new FileReader(new File(path))) {
             RunScript.execute(conn, fr);
@@ -54,7 +55,7 @@ public class DataAccessTest {
     public void testSave() {
         BowlingGame game = factory.getGame();
         game.addScores(10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10);
-        new BowlingGameDao(DBUtil.getConnection()).save(game);
+        new BowlingGameDaoImpl(DBUtil.getConnection()).save(game);
         GameEntity result = query(game.getEntity().getId());
         assertEquals(game.getEntity().getId(), result.getId());
         assertEquals(game.getEntity().getMaxTurn(), result.getMaxTurn());
@@ -66,18 +67,14 @@ public class DataAccessTest {
             assertEquals(turnEntity.getFirstPin(), turnResult.getFirstPin());
             assertEquals(turnEntity.getSecondPin(), turnResult.getSecondPin());
         }
-
     }
 
     //Prepared data in db.
     @Test
     public void testLoad() {
-        BowlingGame game = new BowlingGameDao(DBUtil.getConnection()).load(1001);
+        BowlingGame game = new BowlingGameDaoImpl(DBUtil.getConnection()).load(1001);
         BowlingGameEntity entity = game.getEntity();
-        BowlingTurnEntity[] turnEntities = entity.getTurnEntities();
-        for (BowlingTurnEntity turnEntity : turnEntities) {
-            System.out.println(turnEntity.getFirstPin() + "... " + turnEntity.getSecondPin());
-        }
+
         assertEquals(Integer.valueOf(1001), entity.getId());
         assertEquals(Integer.valueOf(10), entity.getMaxTurn());
         assertEquals(12, game.getTurns().length);
@@ -88,51 +85,53 @@ public class DataAccessTest {
     @Test
     public void testRemove() {
         GameEntity before = query(1001);
-        assertEquals(Integer.valueOf(1001), before.getId());
+        assertEquals(1001, before.getId());
 
-        new BowlingGameDao(DBUtil.getConnection()).remove(1001);
+        new BowlingGameDaoImpl(DBUtil.getConnection()).remove(1001);
 
         GameEntity after = query(1001);
         assertNull(after);
     }
 
-
+    // Get designated game entity by given id_game
     private BowlingGameEntity query(Integer id) {
-        //TODO
-        try {
-            String querySql = "select * from bowling_game where id = ?";
-            PreparedStatement statement = DBUtil.getConnection().prepareStatement(querySql);
-            statement.setInt(1, id);
-            ResultSet rs = statement.executeQuery();
+        Integer maxTurn = null, maxPin = null;
+        String sql = "Select * From GAME Where id_game = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            conn.commit();
+
             if (rs.next()) {
-                BowlingGameEntity bowlingGameEntity = new BowlingGameEntityImpl(id, rs.getInt(3), rs.getInt(4));
-                return bowlingGameEntity;
-            } else {
-                return null;
+                maxTurn = rs.getInt(3);
+                maxPin = rs.getInt(4);
+                return new BowlingGameEntityImpl(id, maxTurn, maxPin);
             }
         } catch (SQLException se) {
             se.printStackTrace();
-            return null;
         }
+        return null;
     }
 
+    // Get designated turn entities by given turn key
     private BowlingTurnEntity query(TurnKey key) {
-        //TODO
-        try {
-            BowlingTurnEntity turnEntity = new BowlingTurnEntityImpl();
-            String querySql = "select * from turn where  id = ? and foreign_id= ?";
-            PreparedStatement statement = DBUtil.getConnection().prepareStatement(querySql);
-            statement.setInt(1, key.getId());
-            statement.setInt(2, key.getForeignId());
-            ResultSet rs = statement.executeQuery();
-            rs.next();
-            turnEntity.setFirstPin(rs.getInt(3));
-            turnEntity.setSecondPin(rs.getInt(4));
-            turnEntity.setId(key);
-            return turnEntity;
+        BowlingTurnEntity turnEntity = new BowlingTurnEntityImpl();
+        String sql = "Select * From TURN Where id_turn = ? And id_game = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, key.getId());
+            pstmt.setInt(2, key.getForeignId());
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                turnEntity.setFirstPin(rs.getInt(3));
+                turnEntity.setSecondPin(rs.getInt(4));
+                turnEntity.setId(key);
+                return turnEntity;
+            }
         } catch (SQLException se) {
             se.printStackTrace();
-            return null;
         }
+        return null;
     }
 }

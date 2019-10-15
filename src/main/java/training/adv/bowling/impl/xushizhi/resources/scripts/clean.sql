@@ -1,2 +1,3 @@
-drop table bowling_game;
-drop table turn;
+-- Drop All Created Tables
+DROP TABLE Game;
+DROP TABLE Turn;
