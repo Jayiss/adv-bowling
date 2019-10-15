@@ -5,7 +5,7 @@ import training.adv.bowling.api.TurnKey;
 
 public class BowlingTurnEntityImpl implements BowlingTurnEntity {
 
-    public static Integer id_turn = 0;  // DB id_turn (TURN PK)
+    static Integer id_turn = 0;  // DB id_turn (TURN PK)
     private TurnKey id_TurnKey;  // DB Turn
     private Integer firstPin, secondPin;  // Pin can be null
 

@@ -8,7 +8,7 @@ public enum StatusCodeImpl implements StatusCode {
 
         @Override
         public String getCode() {
-            return "" + 200;
+            return "200";
         }
 
         @Override
@@ -19,7 +19,7 @@ public enum StatusCodeImpl implements StatusCode {
 
         @Override
         public String getCode() {
-            return "" + 401;
+            return "401";
         }
 
         @Override
@@ -31,7 +31,7 @@ public enum StatusCodeImpl implements StatusCode {
 
         @Override
         public String getCode() {
-            return "" + 402;
+            return "402";
         }
 
         @Override
@@ -43,7 +43,7 @@ public enum StatusCodeImpl implements StatusCode {
 
         @Override
         public String getCode() {
-            return "" + 403;
+            return "403";
         }
 
         @Override
@@ -54,7 +54,7 @@ public enum StatusCodeImpl implements StatusCode {
 
         @Override
         public String getCode() {
-            return "" + 501;
+            return "501";
         }
 
         @Override

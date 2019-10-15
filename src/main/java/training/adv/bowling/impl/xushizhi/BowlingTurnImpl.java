@@ -165,67 +165,35 @@ public class BowlingTurnImpl implements BowlingTurn, LinkedList<BowlingTurn> {
 
     @Override
     // Return current turn score
-    public Integer getScore() {  //TODO
-//        int counterTurn = 1;
-//        BowlingTurn cursor = this;
-//        while (cursor != null) {
-//            cursor = ((BowlingTurnImpl) cursor).prev;
-//            counterTurn++;
-//            if (counterTurn > MAX_TURN + 2) {
-//                System.out.println("Invalid Game ! Has reached default max turn.");
-//                return 0;
-//            }
-//        }
-//
-//        int score = calcTurnScore((BowlingTurnEntity) this);  // Current turn total score
-//        // Scenario I: Current turn is SPARE -> Add next 1 toss
-//        if (next != null) {
-//            if (isSpare()) {
-//                score += next.getFirstPin();
-//                // Scenario II: Current turn is STRIKE -> Add next 2 tosses
-//            } else if (isStrike()) {
-//                // Scenario II/1. Current toss is last but one toss -> Add next 1 toss only
-//                if (next.getAsLinkedNode().getNextItem() == null) {
-//                    score += calcTurnScore((BowlingTurnEntity) next);
-//                } else {
-//                    // Scenario II/2: Next turn is STRIKE -> Add Turn_1.1stPin & Turn_2.1stPin
-//                    if (next.isStrike()) {
-//                        score += next.getFirstPin() + next.getAsLinkedNode().getNextItem().getFirstPin();
-//                    } else {
-//                        // Scenario II/3.1: Next turn is SPARE -> Add Turn_1.1stPin & Turn_1.2ndPin
-//                        if (next.isFinished()) {
-//                            score += calcTurnScore((BowlingTurnEntity) next);
-//                            // Scenario II/3.2: Next turn is Not Finished -> Add Turn_1.1stPin & Turn_2.1stPin
-//                        } else {
-//                            score += next.getFirstPin() + next.getAsLinkedNode().getNextItem().getFirstPin();
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return score;
-
+    public Integer getScore() {
         int counterTurn = 1;
-        BowlingTurn cursor = this;
-        while (cursor != null) {
-            cursor = ((BowlingTurnImpl) cursor).prev;
+        BowlingTurn currTurn = this;
+        while (currTurn != null) {
             counterTurn++;
+            currTurn = ((BowlingTurnImpl) currTurn).prev;
+
+            // If has reached default max turn
             if (counterTurn > MAX_TURN + 2) {
-                System.out.println("Invalid Game ! Has reached default max turn.");
                 return 0;
             }
         }
 
+        // Scenario I: Current turn is STRIKE
         if (isStrike()) {
+            // Scenario I/1: 11th turn is STRIKE -> 2 * MAX_PIN + Next but one turn 1st toss
             if (next != null && next.isStrike()) {
                 return MAX_PIN + MAX_PIN + (next.getAsLinkedNode().getNextItem() == null ? 0 : next.getAsLinkedNode().getNextItem().getFirstPin());
+                // Scenario I/2: 11th turn is NOT STRIKE -> MAX_PIN + Next turn 1st & 2nd toss
             } else if (next != null && (next.isSpare() || next.isMiss())) {
                 return MAX_PIN + next.getFirstPin() + next.getSecondPin();
+                // Scenario I/3: 11th turn is NOT finished -> MAX_PIN + Next turn 1st toss
             } else {
                 return MAX_PIN + (next == null ? 0 : next.getFirstPin());
             }
+            // Scenario II: Current turn is SPARE -> MAX_PIN + Next 1 toss
         } else if (isSpare()) {
             return MAX_PIN + (next == null ? 0 : next.getFirstPin());
+            // Scenario III: Current turn is MISS -> 1st Toss + 2nd Toss
         } else if (isMiss()) {
             return turnEntity.getFirstPin() + (turnEntity.getSecondPin());
         }

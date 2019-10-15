@@ -5,10 +5,9 @@ import training.adv.bowling.api.BowlingTurnEntity;
 
 public class BowlingGameEntityImpl implements BowlingGameEntity {
 
-    private Integer id;  // DB Game id_game
     private static int MAX_PIN = 10;  // Set default bowling game max pin to 10
     private static int MAX_TURN = 10;  // Set default bowling game max turn to 10
-
+    private Integer id;  // DB Game id_game
     private BowlingTurnEntity[] bowlingTurnEntities;
 
     public BowlingGameEntityImpl(Integer id, int Max_Turn, int Max_Pin) {

@@ -87,33 +87,6 @@ public class BowlingGameDaoImpl extends AbstractDao<BowlingGameEntity, BowlingGa
         }
     }
 
-//    @Override
-//    protected void doSave(BowlingGameEntity entity) {
-//        int maxTurn = entity.getMaxTurn();
-//        int id = entity.getId();
-//        int maxPins = entity.getMaxPin();
-//        BowlingTurnEntity[] turnEntities = entity.getTurnEntities();
-//
-//        String insertSql = "Insert Into GAME Values(?, ?, ?, ?)";
-//        try {
-//            PreparedStatement preparedStatement = conn.prepareStatement(insertSql);
-//            preparedStatement.setInt(1, id);
-//            preparedStatement.setInt(2, 0);  // Test Data
-//            preparedStatement.setInt(3, maxTurn);
-//            preparedStatement.setInt(4, maxPins);
-//            preparedStatement.executeUpdate();
-//
-//            for (BowlingTurnEntity bowlingTurnEntity : turnEntities) {
-//                new BowlingTurnDaoImpl(conn).doSave(bowlingTurnEntity);
-//            }
-//            conn.commit();
-//        } catch (SQLException se) {
-//            se.printStackTrace();
-//        } finally {
-//            this.closeAll(null, pstmt, rs);
-//        }
-//    }
-
     @Override
     // Get the bowling game entity data from H2 DB (by Game ID)
     protected BowlingGameEntity doLoad(Integer id) {
