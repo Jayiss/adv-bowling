@@ -1,13 +1,12 @@
 package training.adv.bowling.impl;
 
-import java.io.Serializable;
-
 import training.adv.bowling.api.Entity;
 import training.adv.bowling.api.Persistable;
 
-public abstract class AbstractDao<E extends Entity<K>, 
-		D extends Persistable<E>, K extends Serializable> {
-	
+import java.io.Serializable;
+
+public abstract class AbstractDao<E extends Entity<K>, D extends Persistable<E>, K extends Serializable> {
+
 	public void save(D domain) {
 		this.doSave(domain.getEntity());
 	}
@@ -18,5 +17,5 @@ public abstract class AbstractDao<E extends Entity<K>,
 	}
 	protected abstract E doLoad(K id);
 	protected abstract D doBuildDomain(E entity);
-	public abstract boolean remove(K key);
+	public abstract boolean remove(K id);
 }
