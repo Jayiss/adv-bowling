@@ -16,7 +16,7 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
         this.MAX_PIN = MAX_PIN;
         this.MAX_TURN = MAX_TURN;
         this.bowlingGameEntity = new BowlingGameEntityImpl(MAX_TURN, MAX_PIN);
-        this.cursor = new BowlingTurnImpl(MAX_TURN, MAX_PIN);
+        this.cursor = new BowlingTurnImpl(MAX_TURN, MAX_PIN,null,null);
     }
 
     @Override
@@ -116,11 +116,12 @@ public class BowlingGameImpl extends AbstractGame<BowlingTurn, BowlingTurnEntity
             recoverNode.getEntity().setFirstPin(recoverPin1);
             recoverNode.getEntity().setSecondPin(recoverPin2);
             recoverNode.getAsLinkedNode().setNextItem(null);
+            return StatusCodeImpl.INVALID_PIN;
         }
 
         syncWithGameEntity();
 
-        return null;
+        return StatusCodeImpl.SUCCESS;
     }
 
     private void syncWithGameEntity() {

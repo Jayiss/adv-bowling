@@ -3,7 +3,7 @@ package training.adv.bowling.impl.dingziyuan;
 import training.adv.bowling.api.BowlingTurnEntity;
 import training.adv.bowling.api.TurnKey;
 
-public class BowlingTurnEntityImpl implements BowlingTurnEntity {
+public class BowlingTurnEntityImpl implements BowlingTurnEntity, Comparable<BowlingTurnEntityImpl> {
     private TurnKey id = new TurnKeyImpl("tid", "gid");
     private Integer[] pins = new Integer[2];
 
@@ -44,5 +44,16 @@ public class BowlingTurnEntityImpl implements BowlingTurnEntity {
     @Override
     public void setId(TurnKey id) {
         this.id = id;
+    }
+
+    @Override
+    public int compareTo(BowlingTurnEntityImpl o) {
+        Integer thisId = Integer.parseInt(getId().getId());
+        Integer oId = Integer.parseInt(o.getId().getId());
+
+        if(thisId>oId)
+            return 1;
+        else
+            return -1;
     }
 }

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class DBUtil {
 
-	private static final String url = "jdbc:h2:tcp://localhost/~/test";
+	private static final String url = "jdbc:h2:mem://localhost/~/test";
 	private static final String user = "sa";
 	private static final String pwd = "";
 	
