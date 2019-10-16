@@ -1,6 +1,8 @@
 package training.adv.bowling.api;
 
-public interface GameEntity<T extends TurnEntity> extends Entity<Integer> {
+import java.io.Serializable;
+
+public interface GameEntity<T extends TurnEntity> extends Entity<String> {
 	void setTurnEntities(T[] turns);
 	T[] getTurnEntities();
 	
