@@ -2,12 +2,9 @@ package training.adv.bowling.impl;
 
 import java.util.Arrays;
 
-import training.adv.bowling.api.Game;
-import training.adv.bowling.api.GameEntity;
-import training.adv.bowling.api.Turn;
-import training.adv.bowling.api.TurnEntity;
+import training.adv.bowling.api.TurnKey;
 
-public abstract class AbstractGame<T extends Turn, E extends TurnEntity, G extends GameEntity<E>> implements Game<T, E, G> {
+public abstract class AbstractGame<T extends Turn, E extends Entity<TurnKey>, G extends GameEntity<E>> implements Game<T, E, G> {
 
 	@Override
 	public final int getTotalScore() {

@@ -7,7 +7,7 @@ public interface BowlingTurn extends Turn, Persistable<BowlingTurnEntity> {
 	Integer getFirstPin();
 	Integer getSecondPin();
 	
-	void addPins(Integer... pins);
-	
+	//void addPins(Integer... pins);
+	StatusCode addPins(Integer... pins);
 	LinkedList<BowlingTurn> getAsLinkedNode();
 }

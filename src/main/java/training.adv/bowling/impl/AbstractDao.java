@@ -2,9 +2,6 @@ package training.adv.bowling.impl;
 
 import java.io.Serializable;
 
-import training.adv.bowling.api.Entity;
-import training.adv.bowling.api.Persistable;
-
 public abstract class AbstractDao<E extends Entity<K>, 
 		D extends Persistable<E>, K extends Serializable> {
 	
